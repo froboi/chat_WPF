@@ -5,8 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:chatInterfacciaGrafica"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Chat" Height="650" Width="500">
     <Grid>
 
+        <Label Content="Nickname" Margin="0,2,371,592" FontSize="25px" FontWeight="Bold" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox x:Name="TxtNickname" Margin="10,35,269,566" BorderThickness="5px" BorderBrush="DarkBlue" Grid.ColumnSpan="2" />
+
+        <Label Content="Server" Margin="272,0,140,594" FontSize="25px" FontWeight="Bold" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox x:Name="TxtServer" Margin="269,35,10,566" BorderThickness="5px" BorderBrush="DarkBlue"/>
+
+        <Label Content="Messagi inviati" Margin="10,68,371,540" FontSize="15px" FontWeight="Bold" />
+        <ListBox Margin="10,94,10,159" BorderThickness="5px" BorderBrush="DarkBlue" />
+
+        <TextBox Margin="10,530,10,71"  BorderThickness="5px" BorderBrush="DarkBlue"/>
     </Grid>
 </Window>
