@@ -5,18 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:chatInterfacciaGrafica"
         mc:Ignorable="d"
-        Title="Chat" Height="650" Width="500">
+        Title="Chat WPF" Height="650" Width="500">
     <Grid>
 
-        <Label Content="Nickname" Margin="0,2,371,592" FontSize="25px" FontWeight="Bold" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox x:Name="TxtNickname" Margin="10,35,269,566" BorderThickness="5px" BorderBrush="DarkBlue" Grid.ColumnSpan="2" />
+        <Label Content="Nickname" Margin="0,2,0,0" FontSize="25px" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="129" Height="40" VerticalAlignment="Top"/>
+        <TextBox x:Name="TxtNickname" Margin="10,35,0,0" BorderThickness="5px" BorderBrush="DarkBlue" Height="33" VerticalAlignment="Top" HorizontalAlignment="Left" Width="221" TextChanged="TxtNickname_TextChanged" />
 
-        <Label Content="Server" Margin="272,0,140,594" FontSize="25px" FontWeight="Bold" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox x:Name="TxtServer" Margin="269,35,10,566" BorderThickness="5px" BorderBrush="DarkBlue"/>
+        <Label Content="Server" x:Name="IPAdress" Margin="272,0,10,0" FontSize="25px" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="88" Height="40" VerticalAlignment="Top"/>
+        <TextBox x:Name="TxtIndirizzoIP" Margin="269,35,10,0" BorderThickness="5px" BorderBrush="DarkBlue" Height="33" VerticalAlignment="Top" TextChanged="TxtServer_TextChanged"/>
 
-        <Label Content="Messagi inviati" Margin="10,68,371,540" FontSize="15px" FontWeight="Bold" />
-        <ListBox Margin="10,94,10,159" BorderThickness="5px" BorderBrush="DarkBlue" />
+        <Label Content="Messagi inviati" Margin="10,68,0,0" FontSize="15px" FontWeight="Bold" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="119" />
+        <ListBox Margin="10,94,10,0" BorderThickness="5px" BorderBrush="DarkBlue"  Height="381" VerticalAlignment="Top" />
 
-        <TextBox Margin="10,530,10,71"  BorderThickness="5px" BorderBrush="DarkBlue"/>
+        <Label Content="box messagio da inviare" Margin="10,481,0,0" FontSize="25px" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="306" Height="40" VerticalAlignment="Top"/>
+        <TextBox Margin="10,530,10,0" x:Name="TxtMessaggio" BorderThickness="5px" BorderBrush="DarkBlue" Height="33" VerticalAlignment="Top"/>
+        
+        <Button x:Name="chatSend" Content="Invia" FontSize="20" FontWeight="Bold" Background="White" BorderThickness="5px" BorderBrush="DarkBlue" Margin="272,568,10,0" Height="56" VerticalAlignment="Top" Click="chatSend_Click"/>
+        <Button x:Name="chatJoin" Content="Entra nel server" FontSize="20" FontWeight="Bold" Background="White" BorderThickness="5px" BorderBrush="DarkBlue" Margin="10,568,269,10" Click="chatJoin_Click"/> 
     </Grid>
 </Window>
