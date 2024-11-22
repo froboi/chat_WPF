@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows.Threading;
 
 namespace chatInterfacciaGrafica
 {
@@ -25,10 +26,11 @@ namespace chatInterfacciaGrafica
         public MainWindow()
         {
             InitializeComponent();
+            InitializeTimer();
         }
 
-        private string StartCLient
-            (string messaggio, string indirizzoIP)
+
+        private string StartCLient(string messaggio, string indirizzoIP)
         {
             string risposta = "";
             byte[] bytes = new byte[2048];
@@ -74,19 +76,41 @@ namespace chatInterfacciaGrafica
             string messaggio = TxtNickname.Text + "è entrato nella chat";
             string indirizzoIP = TxtIndirizzoIP.Text;
             string risposta = StartCLient(messaggio, indirizzoIP);
+            InitializeTimer();
         }
 
         private void chatSend_Click(object sender, RoutedEventArgs e)
         {
-            
-
+            string messaggio = TxtNickname.Text + ": " + TxtMessaggio.Text;
+            string indirizzoIP = TxtIndirizzoIP.Text;
+            string risposta = StartCLient(messaggio, indirizzoIP);
         }
-        
 
+        private void InitializeTimer()
+        {
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Tick += Chat_input;
+            timer.Start();
+        }
 
+        private void Chat_input(object sender, EventArgs e)
+        {
+            
+        }
 
-
-
-
+        /*
+        private void chatReceive_Click(object sender, RoutedEventArgs e)
+        {
+            string messaggio = "receive";
+            string indirizzoIP = TxtIndirizzoIP.Text;
+            string risposta = StartCLient(messaggio, indirizzoIP);
+            if (ultimoMess != risposta)
+            {
+                TxtChat.Text += risposta + "\n";
+                ultimoMess = risposta;
+            }
+        }
+        */
     }
 }
