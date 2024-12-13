@@ -12,6 +12,8 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Threading;
+using System.Xml.Linq;
+using System.IO;
 
 namespace chatInterfacciaGrafica
 {
@@ -23,94 +25,175 @@ namespace chatInterfacciaGrafica
 
         string ultimoMess = "";
 
+        string ip;
+        string nikname;
+        string messaggio;
+        DispatcherTimer Timer;
+
+
         public MainWindow()
         {
             InitializeComponent();
-            InitializeTimer();
+
+            Timer = new DispatcherTimer(); // Inizializza il timer qui
+            Timer.Interval = TimeSpan.FromSeconds(1); // Imposta l'intervallo a 1 secondo
+            Timer.Tick += timer_Tick; // Assegna l'evento Tick
+        }
+
+        public void timer_Tick(object? sender, EventArgs e)
+        {
+            RichiedoMessaggiAlserver();
+            lstMess.Items.Add("Secondo passato");
         }
 
 
-        private string StartCLient(string messaggio, string indirizzoIP)
+        private void StartClient()
         {
-            string risposta = "";
+            // Data buffer for incoming data.
             byte[] bytes = new byte[2048];
-            IPAddress ipAddress = IPAddress.Parse(indirizzoIP);
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+            ip = TxtIndirizzoIP.Text;
+            nikname = TxtNickname.Text;
 
             try
             {
-                Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                try
+                // Connect to a remote device.
+                IPAddress ipAddress = IPAddress.Parse(ip);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+                Socket sender = new Socket(AddressFamily.InterNetwork,
+                SocketType.Stream, ProtocolType.Tcp);
+
+                messaggio = TxtMessaggio.Text;
+                sender.Connect(remoteEP);
+                sender.RemoteEndPoint.ToString();
+
+                if (messaggio == ultimoMess)
                 {
-                    sender.Connect(remoteEP);
-                    byte[] msg = Encoding.UTF8.GetBytes(messaggio);
+                    MessageBox.Show("Non puoi inviare lo stesso messaggio due volte di seguito");
+                }
+                else
+                {
+                    // Encode the data string into a byte array.
+                    byte[] msg = Encoding.UTF8.GetBytes(nikname + ": " + messaggio + "<EOF>");
+                    // Send the data through the socket.
                     int bytesSent = sender.Send(msg);
-                    int bytesRec = sender.Receive(bytes);
-                    risposta = Encoding.UTF8.GetString(bytes, 0, bytesRec);
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
-                    return risposta;
-                }
-                catch (ArgumentNullException ane)
-                {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                }
-                catch (SocketException se)
-                {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                    lstMess.Items.Add(nikname + " ha inviato: " + messaggio);
+
+
                 }
             }
-            catch (Exception e)
+            catch (System.Net.Sockets.SocketException ex)
             {
-                Console.WriteLine(e.ToString());
+                MessageBox.Show("Errore! l'ip non risulta essere un server autorizzato! " + ex.Message + "al socket " + ex.SocketErrorCode);
             }
-            return risposta;
+            catch (System.FormatException)
+
+            {
+                MessageBox.Show("Errore! Non risulta essere un ip valido! ");
+
+            }
+
+            // Invio il messaggio
+            LeggoIMessaggi(nikname, ip, messaggio);
+
+            ultimoMess = messaggio;
+
+
         }
 
         private void chatJoin_Click(object sender, RoutedEventArgs e)
         {
-            string messaggio = TxtNickname.Text + "è entrato nella chat";
-            string indirizzoIP = TxtIndirizzoIP.Text;
-            string risposta = StartCLient(messaggio, indirizzoIP);
-            InitializeTimer();
+
+
+            Timer = new DispatcherTimer();
+            Timer.Interval = TimeSpan.FromSeconds(30);
+            Timer.Tick += timer_Tick;
+            Timer.Start();
+
+
+            try
+            {
+                ip = TxtIndirizzoIP.Text;
+                IPAddress ipAddress = IPAddress.Parse(ip);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+                Socket test = new Socket(AddressFamily.InterNetwork,
+                SocketType.Stream, ProtocolType.Tcp);
+                lstMess.Items.Add("L'utente " + TxtNickname.Text + " si è connesso al server " + TxtIndirizzoIP.Text).ToString();
+                //CaricoMessaggiVecchi(txtIp.Text);
+
+
+
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                MessageBox.Show("Errore! l'ip non risulta essere un server autorizzato! " + ex.Message + "al socket " + ex.SocketErrorCode);
+            }
+            catch (System.FormatException)
+
+            {
+                MessageBox.Show("Errore! Non risulta essere un ip valido! ");
+            }
         }
 
         private void chatSend_Click(object sender, RoutedEventArgs e)
         {
-            string messaggio = TxtNickname.Text + ": " + TxtMessaggio.Text;
-            string indirizzoIP = TxtIndirizzoIP.Text;
-            string risposta = StartCLient(messaggio, indirizzoIP);
+            StartClient();
+            RichiedoMessaggiAlserver();
+            TxtMessaggio.Text = "";
         }
-
-        private void InitializeTimer()
+        private void LeggoIMessaggi(string nome, string server, string messaggio)
         {
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(2);
-            timer.Tick += Chat_input;
-            timer.Start();
-        }
-
-        private void Chat_input(object sender, EventArgs e)
-        {
-            
-        }
-
-        /*
-        private void chatReceive_Click(object sender, RoutedEventArgs e)
-        {
-            string messaggio = "receive";
-            string indirizzoIP = TxtIndirizzoIP.Text;
-            string risposta = StartCLient(messaggio, indirizzoIP);
-            if (ultimoMess != risposta)
+            try
             {
-                TxtChat.Text += risposta + "\n";
-                ultimoMess = risposta;
+                DateTime data = DateTime.Now;
+
+                string ora = data.ToString();
+
+                using (StreamWriter sw = File.AppendText(server + ".txt"))
+                {
+                    sw.WriteLine("L'utente " + nome + " ha detto " + messaggio + " alle ore " + ora);
+                }
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                string filePath = server + ".txt";
+                File.Create(filePath).Dispose();
             }
         }
-        */
+
+        private void RichiedoMessaggiAlserver()
+        {
+            byte[] bytes = new byte[2048];
+
+            string richiesta = "<RDMSG><EOF>";
+            // Connect to a remote device.
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+            Socket sender = new Socket(AddressFamily.InterNetwork,
+            SocketType.Stream, ProtocolType.Tcp);
+
+            sender.Connect(remoteEP);
+            sender.RemoteEndPoint.ToString();
+
+
+
+            // Encode the data string into a byte array.
+            byte[] msg = Encoding.UTF8.GetBytes(richiesta);
+            // Send the data through the socket.
+            int bytesSent = sender.Send(msg);
+            // Receive the response from the remote device.
+            int bytesRec = sender.Receive(bytes);
+
+            string risposta = Encoding.UTF8.GetString(bytes, 0, bytesRec);
+
+
+            //Mi salvo l'ultima risposta presente 
+            string? ultimaRisposta = lstMess.Items[lstMess.Items.Count - 1].ToString();
+
+            if (risposta != ultimaRisposta)
+            {
+                lstMess.Items.Add(risposta);
+                ultimaRisposta = risposta;
+            }
+        }
     }
 }

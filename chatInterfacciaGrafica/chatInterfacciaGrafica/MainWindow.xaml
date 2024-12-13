@@ -15,7 +15,7 @@
         <TextBox x:Name="TxtIndirizzoIP" Margin="269,35,10,0" BorderThickness="5px" BorderBrush="DarkBlue" Height="33" VerticalAlignment="Top" />
 
         <Label Content="Messagi inviati" Margin="10,68,0,0" FontSize="15px" FontWeight="Bold" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="119" />
-        <ListBox Margin="10,94,10,0" BorderThickness="5px" BorderBrush="DarkBlue"  Height="381" VerticalAlignment="Top" />
+        <ListBox x:Name="lstMess" Margin="10,94,10,0" BorderThickness="5px" BorderBrush="DarkBlue"  Height="381" VerticalAlignment="Top" />
 
         <Label Content="box messagio da inviare" Margin="10,481,0,0" FontSize="25px" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="306" Height="40" VerticalAlignment="Top"/>
         <TextBox Margin="10,530,10,0" x:Name="TxtMessaggio" BorderThickness="5px" BorderBrush="DarkBlue" Height="33" VerticalAlignment="Top"/>
