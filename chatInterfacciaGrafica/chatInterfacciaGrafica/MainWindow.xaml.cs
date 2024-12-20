@@ -46,6 +46,18 @@ namespace chatInterfacciaGrafica
             lstMess.Items.Add("Secondo passato");
         }
 
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Controlla quale tasto è stato premuto
+            if (e.Key == Key.Enter)
+            {
+                // Esegui l'azione desiderata
+                StartClient();
+                RichiedoMessaggiAlserver();
+                TxtMessaggio.Text = "";
+            }
+        }
+
 
         private void StartClient()
         {
@@ -159,6 +171,8 @@ namespace chatInterfacciaGrafica
                 File.Create(filePath).Dispose();
             }
         }
+
+        
 
         private void RichiedoMessaggiAlserver()
         {
